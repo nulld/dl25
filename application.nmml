@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- NMML reference: https://gist.github.com/1763850 -->
+	
+	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
+	<meta title="KalinkaMalinka" package="ru.ld25.kalinka.KalinkaMalinka" version="1.0.0" company="nulldivide" />
+	
+	<!-- output -->
+	<app main="ru.ld25.kalinka.Main" file="KalinkaMalinka" path="bin" />
+	
+	<window background="#000000" fps="60" />
+	<window width="800" height="480" unless="mobile" />
+	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp" />
+	
+	<!-- classpath, haxe libs -->
+	<source path="src" />
+	<haxelib name="nme" />
+	<haxelib name="swf" />
+	<haxelib name="actuate"/>
+	
+	<!-- assets -->
+	<icon path="assets/nme.svg" />
+	<assets path="assets/img" rename="img" />
+	
+	<!-- DLLs -->
+	<ndll name="std" />
+	<ndll name="regexp" />
+	<ndll name="zlib" />
+	<ndll name="nme" haxelib="nme" />
+	
+	<library path="fla/assets.swf" />
+
+	<!-- optimize JS output -->
+	<haxeflag name="--dead-code-elimination" if="html5" />
+	<haxeflag name="--js-modern" if="html5" />
+	
+</project>
