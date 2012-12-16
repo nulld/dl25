@@ -19,20 +19,28 @@ class Izba extends Sprite
 {
 	
 	public var layout:MovieClip;
+	public var anim:Animation;
 	
-	public var legLeft:Animation;
-	public var legRight:Animation;
+	//public var legLeft:Animation;
+	//public var legRight:Animation;
 
 	
 	public var fps:Int = 12;
+	
 
 	public function new() 
 	{
 		super();
 		
-		layout = cast new McIzba();
-		layout.stop();
+		layout = new McIzba();
 		
+		anim = new Animation(layout);
+		
+		anim.addAnimation("idle", 1, 67,12,true);
+		anim.addAnimation("leftPunch", 22, 33);
+		anim.addAnimation("rightPunch", 33, 45);
+		anim.playAnimation("idle");
+/*		
 		legLeft  = new Animation(cast layout.getChildByName("leftLeg"));
 		legLeft.addAnimation("idle", 1, 1 );
 		legLeft.addAnimation("punch", 1, 5 );
@@ -44,7 +52,9 @@ class Izba extends Sprite
 		
 		Main.instance.AddUpdateble(legLeft);
 		Main.instance.AddUpdateble(legRight);
+*/		
 		
+		Main.instance.AddUpdateble(anim);
 		addChild(layout);
 		
 	}
@@ -52,7 +62,11 @@ class Izba extends Sprite
 	public function LeftPunch():Void
 	{
 		
-		legLeft.playAnimation("punch");
+		anim.playAnimation( "leftPunch"
+							 , function():Void 
+							 { 
+								anim.playAnimation("idle");  
+							 });
 	
 		
 	/*	
@@ -70,7 +84,13 @@ class Izba extends Sprite
 	
 	public function RightPunch():Void
 	{
-		legRight.playAnimation("punch");
+		anim.playAnimation("rightPunch" 
+							   , function():Void 
+							   { 
+								 anim.playAnimation("idle"); 
+							   });
+							   
+		
 	}
 	
 	private function enterFrame(e:Event):Void

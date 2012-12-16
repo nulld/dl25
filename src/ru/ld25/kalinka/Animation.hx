@@ -90,11 +90,13 @@ class Animation implements IUpdatable
 				}
 				else
 				{
-					if (state.completeCb != null)
-					{
-						state.completeCb();
-					}
+					var cb:Void->Void = state.completeCb;
 					state = null;
+					if (cb != null)
+					{
+						cb();
+					}
+					
 					return;
 				}
 			}

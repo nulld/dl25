@@ -9,7 +9,7 @@
 	<app main="ru.ld25.kalinka.Main" file="KalinkaMalinka" path="bin" />
 	
 	<window background="#000000" fps="60" />
-	<window width="800" height="480" unless="mobile" />
+	<window width="900" height="640" unless="mobile" />
 	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp" />
 	
 	<!-- classpath, haxe libs -->
@@ -21,6 +21,8 @@
 	<!-- assets -->
 	<icon path="assets/nme.svg" />
 	<assets path="assets/img" rename="img" />
+	
+	<assets path="assets/sounds" rename="assets/sounds" type="music" include="*" />
 	
 	<!-- DLLs -->
 	<ndll name="std" />
