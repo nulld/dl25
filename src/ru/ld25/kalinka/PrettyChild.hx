@@ -4,6 +4,8 @@ import nme.Assets;
 import nme.display.Sprite;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.easing.Cubic;
+import nme.geom.Rectangle;
+import nme.Lib;
 
 /**
  * ...
@@ -17,19 +19,27 @@ class PrettyChild extends Sprite
 	
 	
 	public var direction:Int;
+	public var duration:Float;
 	
-	public function new(direction:Int=1) 
+	public function new(direction:Int=1, duration:Float=3.0) 
 	{
 		super();
 		
 		this.direction = direction;
+		this.duration  = duration;
+		
 		var ind:Int = Math.floor(Math.random() * 1.5);
 		var choice:Array<String> = ["boy", "girl"];
 		var b:Bitmap = new Bitmap(Assets.getBitmapData("img/" + choice[ind] + Std.string(direction) + ".png"));
-		//b.y = b.height;
+		b.scaleX = b.scaleY = 0.7;
+		b.y = -b.height + 30;
 		
-		if (direction == LEFT2RIGHT) b.x =  -b.width;
+		b.x = (direction == LEFT2RIGHT) ?  -b.width + 30 : -30;
 		addChild(b);
+		
+		graphics.beginFill(0x00ff00);
+		graphics.drawCircle(0, 0, 10);
+		graphics.endFill();
 		
 		x = (direction == LEFT2RIGHT) ? 0 : Main.instance.stage.stageWidth;
 		rotation = (direction == LEFT2RIGHT) ? 30: -30;
@@ -37,9 +47,12 @@ class PrettyChild extends Sprite
 	
 	public function StartMoving():Void
 	{
-		var tartgetX:Float =  Main.instance.stage.stageWidth / 2;
-		tartgetX += (direction == LEFT2RIGHT) ? 200 : -200;
-		Actuate.tween(this, 5, { y : Main.instance.stage.stageHeight + 100, x : tartgetX } ).ease (Cubic.easeIn);
+		var ha:Rectangle = (direction == LEFT2RIGHT) ? Main.instance.leftLegHitArea : Main.instance.rightLegHitArea;
+		
+		var targetX:Float =  (direction == LEFT2RIGHT) ? ha.right : ha.left;
+		var targetY:Float  =  ha.bottom;
+
+		Actuate.tween(this, duration, { y : targetY, x : targetX } ).ease (Cubic.easeIn).onComplete(killIzba);
 	}
 	
 	public function KickOff():Void
@@ -55,6 +68,12 @@ class PrettyChild extends Sprite
 		parent.removeChild(this);
 		
 	}
+	
+	private function killIzba():Void
+	{
+		Lib.trace("KILL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	}
+	
 	
 	
 }

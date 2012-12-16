@@ -1,5 +1,6 @@
 package ru.ld25.kalinka;
 
+import haxe.Timer;
 import nme.display.Bitmap;
 import nme.display.FPS;
 import nme.display.Sprite;
@@ -13,6 +14,7 @@ import ru.ld25.kalinka.Bang;
 import nme.Assets;
 import nme.events.MouseEvent;
 import com.eclecticdesignstudio.motion.Actuate;
+import nme.geom.Rectangle;
 
 /**
  * ...
@@ -37,7 +39,9 @@ class Main extends Sprite
 	public var _lastTickTime:Float;
 	public var _tickDt:Float;
 	
-	private var _timer:Float;
+	private var _startTime:Int;
+	
+	public var timer:Float;
 	private static inline var startIzbaFps:Int = 6;
 
 	public var _updatable:Array<IUpdatable>;
@@ -59,13 +63,15 @@ class Main extends Sprite
 	
 	public var splash:Sprite;
 	
+	public var leftLegHitArea:Rectangle;
+	public var rightLegHitArea:Rectangle;
+	
 	
 	public function new() 
 	{
 		
 		instance = this;
 		frame    = 0;
-		_lastTickTime = 0.0;
 		_updatable = [];
 		_tickDt = 1.0 / FPS;
 		
@@ -115,6 +121,7 @@ class Main extends Sprite
 		removeEventListener(Event.ENTER_FRAME, onFrame);
 		removeChild(izba);
 		snd.Stop();
+		RemoveUpdateble(snd);
 		stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 		izba = null;
@@ -148,6 +155,18 @@ class Main extends Sprite
 	{
 		// entry point
 		// new to Haxe NME? please read *carefully* the readme.txt file!
+		
+		leftLegHitArea = new Rectangle((stage.stageWidth / 2) - 200 , stage.stageHeight - 100, 70, 80);
+		rightLegHitArea = new Rectangle((stage.stageWidth / 2) + 100 , stage.stageHeight - 100, 70, 80);
+		
+		graphics.beginFill(0xff00000);
+		graphics.drawRect(leftLegHitArea.x, leftLegHitArea.y, leftLegHitArea.width, leftLegHitArea.height);
+		graphics.endFill();
+		
+		graphics.beginFill(0xff00000);
+		graphics.drawRect(rightLegHitArea.x, rightLegHitArea.y, rightLegHitArea.width, rightLegHitArea.height);
+		graphics.endFill();
+		
 		
 		_scoresTF = new TextField();
 		addChild(_scoresTF);
@@ -199,7 +218,9 @@ class Main extends Sprite
 	public function startGame():Void
 	{
 		score = 0;
-		lives = 3;
+		lives = 300;
+		
+		_startTime = Lib.getTimer();
 		
 		izba = new Izba();
 		izba.x = stage.stageWidth / 2;
@@ -213,13 +234,26 @@ class Main extends Sprite
 		stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 		
 		frame = 0;
-		_lastTickTime = 0.0;
+		
+		timer        = 0.0;
 		
 		snd.Start();
+		AddUpdateble(snd);
 		AddUpdateble(babySpawner);
 		babySpawner.Start();
+		
 
+		_lastTickTime = 0.0;
 		addEventListener(Event.ENTER_FRAME, onFrame);
+		
+		Actuate.timer(1).onComplete (_tick, []);
+	}
+	
+	private function _tick()
+	{
+		timer += 1.0;
+		//Lib.trace(timer);
+		Actuate.timer(1).onComplete (_tick, []);
 	}
 	
 	public function AddUpdateble(obj:IUpdatable):Void
@@ -235,7 +269,8 @@ class Main extends Sprite
 	private function isIzbaIntersects(b:PrettyChild):Bool
 	{
 		var eps:Float = 22.0;
-		return (Math.abs(b.y - (izba.y)) < eps);
+		
+		return (b.direction == PrettyChild.LEFT2RIGHT) ? leftLegHitArea.contains(b.x, b.y) : rightLegHitArea.contains(b.x, b.y);
 	}
 	
 	
@@ -304,31 +339,41 @@ class Main extends Sprite
 	public function onFrame(e:Event):Void
 	{
 
-		var timer:Float =  Lib.getTimer();
+		var ltimer:Int =   Lib.getTimer();
+		timer     = (ltimer - _startTime) / 1000.0;
 
+		
 		var frames:Int = 0;
 		if (_lastTickTime > 0.0)
 		{
-			frames = Math.floor((timer - _lastTickTime) / _tickDt);
+			frames = Math.floor((ltimer - _lastTickTime)  / (_tickDt));
 		}
 		else
 		{
 			frames = 1;
 		}
+		
+		if (frames > 0)
+		{
+			_lastTickTime = Lib.getTimer() / 1000.0 ;
+		}
 
-		_lastTickTime = timer;
-		frame += frames;
-		if (frames > MAX_TICKS) frames = MAX_TICKS;
+		
+		frame  += frames;
+		
+		
+		if (frames > MAX_TICKS) 
+		{
+			frames = MAX_TICKS;
+		}
 
 		for (i in 0...frames)
 		{
 			for (entity in _updatable)
 			{
-				_timer += _tickDt;
 				entity.update(_tickDt);
 			}
 		}
-		
 		
 	}
 	

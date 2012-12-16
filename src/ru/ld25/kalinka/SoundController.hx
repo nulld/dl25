@@ -4,13 +4,14 @@ import nme.media.SoundChannel;
 import nme.events.Event;
 
 import nme.Assets;
+import nme.Lib;
 import haxe.Timer;
 /**
  * ...
  * @author nulldivide
  */
 
-class SoundController 
+class SoundController implements IUpdatable
 {
 	
 	var startSound:Sound;
@@ -21,6 +22,10 @@ class SoundController
 	var started:Bool;
 	
 	
+	var _timer:Float;
+	
+	
+	var state:Int = 0;
 
 	public function new() 
 	{
@@ -34,13 +39,10 @@ class SoundController
 		if (currentChannel != null) currentChannel.stop();
 		
 		started = true;
+		_timer  = 0.0;
+		state   = 0;
 		
 		currentChannel = startSound.play();
-		
-		Timer.delay( function() 
-				    {
-					   if (started) currentChannel = loop.play(0, 999999);
-					}, Math.floor(startSound.length) );
 	}
 	
 	
@@ -52,7 +54,18 @@ class SoundController
 			currentChannel.stop();
 			currentChannel = null;
 		}
+	}
+	
+	public function update(dt):Void
+	{
+		Lib.trace(Main.instance.timer);
 		
+		if ((Main.instance.timer >= (startSound.length/ 1000.0)) && (state == 0))
+		{
+			state = 1;
+			currentChannel.stop();
+			currentChannel = loop.play(0, 999999);
+		}
 	}
 	
 }
