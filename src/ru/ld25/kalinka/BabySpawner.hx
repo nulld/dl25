@@ -40,8 +40,14 @@ class BabySpawner implements IUpdatable
 		
 		for (i in 0...10000)
 		{
-			leftTrack.push(leftTrack[leftTrack.length - 1] + Math.floor(Math.max(1500, (Math.random() * 10000))));
-			rightTrack.push(rightTrack[rightTrack.length - 1] + Math.floor(Math.max(1500, (Math.random() * 10000))));
+			var leftVal:Int = leftTrack[leftTrack.length - 1] + Math.floor(Math.max(2000, (Math.random() * k)));
+			var rightVal:Int = rightTrack[rightTrack.length - 1] + Math.floor(Math.max(2000, (Math.random() * k)));
+			if ( Math.abs(leftVal - rightVal) < 1500)
+			{
+				leftVal = rightVal;
+			}
+			leftTrack.push(leftVal);
+			rightTrack.push(rightVal);
 		}
 		
 		leftTrack.push( EOF );
