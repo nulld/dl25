@@ -16,6 +16,8 @@ class SoundController implements IUpdatable
 	
 	var startSound:Sound;
 	var loop:Sound;
+	var punch:Sound;
+	var gameOver:Sound;
 	
 	var currentChannel:SoundChannel;
 	
@@ -30,7 +32,9 @@ class SoundController implements IUpdatable
 	public function new() 
 	{
 		startSound = Assets.getSound ("assets/sounds/music_start.mp3");
-		loop = Assets.getSound("assets/sounds/music_loop.mp3");
+		loop  = Assets.getSound("assets/sounds/music_loop.mp3");
+		punch = Assets.getSound("assets/sounds/punch.mp3");
+		gameOver = Assets.getSound("assets/sounds/gameover.mp3");
 		started = false;
 	}
 	
@@ -45,6 +49,11 @@ class SoundController implements IUpdatable
 		currentChannel = startSound.play();
 	}
 	
+	public function PlayPunch():Void
+	{
+		punch.play();
+	}
+	
 	
 	public function Stop():Void
 	{
@@ -56,9 +65,14 @@ class SoundController implements IUpdatable
 		}
 	}
 	
+	public function PlayGameOver():Void
+	{
+		gameOver.play();
+	}
+	
 	public function update(dt):Void
 	{
-		Lib.trace(Main.instance.timer);
+		//Lib.trace(Main.instance.timer);
 		
 		if ((Main.instance.timer >= (startSound.length/ 1000.0)) && (state == 0))
 		{

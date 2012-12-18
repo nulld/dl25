@@ -16,10 +16,10 @@ class Bang extends Animation
 	{
 		super(new McBang());
 		
-		addAnimation("go", 1, 16);
+		addAnimation("go", 1, 10);
 		Main.instance.AddUpdateble(this);
 		
-		Actuate.tween(layout, 0.7, { "alpha" : 0.0 } );
+		//Actuate.tween(layout, 0.7, { "alpha" : 0.0 } );
 		
 		playAnimation( "go"
 					 , function():Void 

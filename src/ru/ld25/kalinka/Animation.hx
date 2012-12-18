@@ -30,6 +30,7 @@ class Animation implements IUpdatable
 	public var animations:Hash<TAnimation>;
 	public var state:TAnimationState;
 	public var valid:Bool;
+	public var currentAnimationName:String;
 	
 	public var layout:MovieClip;
 
@@ -41,6 +42,7 @@ class Animation implements IUpdatable
 		mc.stop();
 		animations = new Hash<TAnimation>();
 		valid = true;
+		currentAnimationName = "";
 	}
 
 	public function addAnimation(name:String, frameStart:Int, frameEnd:Int, ?fps:Int = 12, ?loop:Bool = false):Void
@@ -61,6 +63,7 @@ class Animation implements IUpdatable
 			, currentFrame: -1
 			, completeCb : onComplete 
 		};
+		currentAnimationName = name;
 		update(0.0);
 	}
 

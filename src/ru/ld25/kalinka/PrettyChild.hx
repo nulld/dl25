@@ -34,15 +34,13 @@ class PrettyChild extends Sprite
 		b.scaleX = b.scaleY = 0.7;
 		b.y = -b.height + 30;
 		
+		y = 200;
+		
 		b.x = (direction == LEFT2RIGHT) ?  -b.width + 30 : -30;
 		addChild(b);
-		
-		graphics.beginFill(0x00ff00);
-		graphics.drawCircle(0, 0, 10);
-		graphics.endFill();
-		
+
 		x = (direction == LEFT2RIGHT) ? 0 : Main.instance.stage.stageWidth;
-		rotation = (direction == LEFT2RIGHT) ? 30: -30;
+		rotation = (direction == LEFT2RIGHT) ? 35: -35;
 	}
 	
 	public function StartMoving():Void
@@ -71,7 +69,12 @@ class PrettyChild extends Sprite
 	
 	private function killIzba():Void
 	{
-		Lib.trace("KILL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		var targetX:Float = x + ((direction == LEFT2RIGHT) ? 200 : - 200);
+		Actuate.tween(this, 0.5, { x : targetX, rotation : 0, y : y + 100 } );
+		Actuate.tween(this, 1.0, { alpha : 0.0 }, false );
+		Main.instance.gameOver();
+		//Main.instance.gameOver();
+		//Lib.trace("KILL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 	
 	

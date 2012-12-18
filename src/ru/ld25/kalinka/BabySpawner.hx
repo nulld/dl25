@@ -17,7 +17,7 @@ class BabySpawner implements IUpdatable
 	private var _timer:Float;
 	public  var active:Bool;
 	private var _nextBabySpawnTime:Float;
-	public var k:Float;
+
 	
 	public var babies:Array<PrettyChild>;
 	
@@ -26,6 +26,8 @@ class BabySpawner implements IUpdatable
 	private var rightTrack:Array<Int>;
 	private var rightTrackInd:Int;
 	
+	private var k:Int = 10000;
+	
 	public  var movingDuration:Float;
 	
 	public function new() 
@@ -33,8 +35,17 @@ class BabySpawner implements IUpdatable
 		_timer = 0.0;
 		babies = [];
 		
-		leftTrack  = [5000, 7000,  EOF];
-		rightTrack = [6000, 10000, EOF];
+		leftTrack  = [6000, 16500, 22700, 26400, 28100,31300,33700, 34300];
+		rightTrack = [11500, 20700, 24600, 25600, 29800, 32400, 34300];
+		
+		for (i in 0...10000)
+		{
+			leftTrack.push(leftTrack[leftTrack.length - 1] + Math.floor(Math.max(1500, (Math.random() * 10000))));
+			rightTrack.push(rightTrack[rightTrack.length - 1] + Math.floor(Math.max(1500, (Math.random() * 10000))));
+		}
+		
+		leftTrack.push( EOF );
+		rightTrack.push( EOF );
 		
 		
 		
@@ -53,7 +64,7 @@ class BabySpawner implements IUpdatable
 		
 		
 		_timer = 0.0;
-		k = 5.0;
+
 		_nextBabySpawnTime = Math.random() * 2.0;
 	}
 	
@@ -76,6 +87,7 @@ class BabySpawner implements IUpdatable
 	public function update(dt:Float):Void
 	{
 		var currTMs:Float = Main.instance.timer * 1000;
+		k--;
 		
 		var nextLeftSpawnTime:Int = leftTrack[leftTrackInd];
 		var nextRightSpawnTime:Int = rightTrack[rightTrackInd];
@@ -84,6 +96,10 @@ class BabySpawner implements IUpdatable
 		{
 			spawnBaby(PrettyChild.LEFT2RIGHT);
 			leftTrackInd++;
+		}
+		else 
+		{
+		
 		}
 		
 		if ((nextRightSpawnTime != EOF) && (nextRightSpawnTime - (movingDuration * 1000) <= currTMs))
