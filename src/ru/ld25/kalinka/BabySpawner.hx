@@ -26,7 +26,7 @@ class BabySpawner implements IUpdatable
 	private var rightTrack:Array<Int>;
 	private var rightTrackInd:Int;
 	
-	private var k:Int = 10000;
+	private var k:Int = 5000;
 	
 	public  var movingDuration:Float;
 	
@@ -38,16 +38,24 @@ class BabySpawner implements IUpdatable
 		leftTrack  = [6000, 16500, 22700, 26400, 28100,31300,33700, 34300];
 		rightTrack = [11500, 20700, 24600, 25600, 29800, 32400, 34300];
 		
+		var lastv:Int = leftTrack[leftTrack.length - 1];
 		for (i in 0...10000)
 		{
-			var leftVal:Int = leftTrack[leftTrack.length - 1] + Math.floor(Math.max(2000, (Math.random() * k)));
-			var rightVal:Int = rightTrack[rightTrack.length - 1] + Math.floor(Math.max(2000, (Math.random() * k)));
-			if ( Math.abs(leftVal - rightVal) < 1500)
+			var nextV = lastv + Math.floor(Math.max(1500, (Math.random() * k)));
+			
+			var mode:Int = Math.floor(Math.random() * 2.5);
+			switch (mode)
 			{
-				leftVal = rightVal;
+				case 0:
+					leftTrack.push(nextV);
+				case 1:
+					rightTrack.push(nextV);
+				case 2:
+					leftTrack.push(nextV);
+					rightTrack.push(nextV);
 			}
-			leftTrack.push(leftVal);
-			rightTrack.push(rightVal);
+			lastv = nextV;
+
 		}
 		
 		leftTrack.push( EOF );

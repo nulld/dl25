@@ -35,6 +35,7 @@ class Animation implements IUpdatable
 	public var layout:MovieClip;
 
 	public var currentFrame(_getCurrentFrame, null):Int;
+	public var currAnimFrame(_getAnimFrame, null):Int;
 
 	public function new(mc:MovieClip) 
 	{
@@ -65,6 +66,11 @@ class Animation implements IUpdatable
 		};
 		currentAnimationName = name;
 		update(0.0);
+	}
+	
+	private function _getAnimFrame():Int
+	{
+		return state.currentFrame;
 	}
 
 	private function _getCurrentFrame():Int

@@ -73,12 +73,17 @@ class Main extends Sprite
 	public var leftKeyDown:Bool;
 	public var rightKeyDown:Bool;
 	
+	public var leftKeyBecomesDown:Bool = false;
+	public var righKeyBecomesDown:Bool = false;
+	
 	public var lbutt1:Bitmap;
 	public var rbutt1:Bitmap;
 	public var lbutt2:Bitmap;
 	public var rbutt2:Bitmap;
 	
 	public var isGameOver:Bool;
+	
+	public var keys:IntHash<Int>;
 	
 	
 	public function new() 
@@ -360,6 +365,9 @@ class Main extends Sprite
 		
 
 		_lastTickTime = 0.0;
+		
+		keys = new IntHash<Int>();
+		
 		addEventListener(Event.ENTER_FRAME, onFrame);
 		
 		//gameOver();
@@ -388,26 +396,18 @@ class Main extends Sprite
 	{
 		var code:Int = e.keyCode;
 		
-		if (code == LEFT_KEY)
+		if (keys.exists(code))
 		{
-			leftKeyDown  = true;
+			return;
 		}
-		else if (code == RIGHT_KEY)
-		{
-			rightKeyDown = true;
-		}
+		
+		keys.set(code, Lib.getTimer());
 	}
 	
 	private function onKeyUp(e:KeyboardEvent):Void
 	{
-		if (e.keyCode == LEFT_KEY)
-		{
-			leftKeyDown  = false;
-		}
-		else if (e.keyCode == RIGHT_KEY)
-		{
-			rightKeyDown = false;
-		}
+		
+		keys.remove(e.keyCode);
 	}
 	
 	static public function main() 
@@ -455,46 +455,64 @@ class Main extends Sprite
 					rbutt2.visible = true;
 				}
 			}
+		}
 	}
-			
-	}
+	
+
 	
 	
-	
-	public function punch():Void
+	private function checkKeys():Void
 	{
+		var currTime:Int = Lib.getTimer();
+		var eps:Int = 700; //7ms
+		var leftKey:Bool = ((keys.exists(LEFT_KEY)) && ((currTime - keys.get(LEFT_KEY)) < 700));
+		var rightKey:Bool = ((keys.exists(RIGHT_KEY)) && ((currTime - keys.get(RIGHT_KEY)) < 700));
 		
-		if ((leftKeyDown) && (rightKeyDown))
+		if (izba.anim.currentAnimationName == "death") return;
+		
+		var anim:String = "";
+		if (leftKey && rightKey)
 		{
-			izba.BothPunch();
-			checkBabiesToKickOff(PrettyChild.LEFT2RIGHT);
-			checkBabiesToKickOff(PrettyChild.RIGHT2LEFT);
+			anim = "bothPunch";
 		}
-		else if (leftKeyDown)
+		else if (leftKey)
 		{
-			izba.LeftPunch();
-			checkBabiesToKickOff(PrettyChild.LEFT2RIGHT);
+			anim = "leftPunch";
 		}
-		else if (rightKeyDown)
+		else if (rightKey)
 		{
-			izba.RightPunch();
-			checkBabiesToKickOff(PrettyChild.RIGHT2LEFT);
+			anim  = "rightPunch";
+		}
+		
+		punch(anim);
+	}
+	
+	public function punch(type:String):Void
+	{
+		if (izba.anim.currentAnimationName == type) return;
+		
+		switch (type)
+		{
+			case "bothPunch":
+				izba.BothPunch();
+				checkBabiesToKickOff(PrettyChild.LEFT2RIGHT);
+				checkBabiesToKickOff(PrettyChild.RIGHT2LEFT);
+			case "rightPunch":
+				izba.RightPunch();
+				checkBabiesToKickOff(PrettyChild.RIGHT2LEFT);
+			case "leftPunch":
+				izba.LeftPunch();
+				checkBabiesToKickOff(PrettyChild.LEFT2RIGHT);
 		}
 	}
+
 	
 	public function onFrame(e:Event):Void
 	{
 		validateTips();
-		if (izba.anim.currentAnimationName == "idle")
-		{
-			punch();
-		}
-		else
-		{
-			leftKeyDown = false;
-			rightKeyDown = false;
-		}
-
+		
+		checkKeys();
+		
 		var ltimer:Int =   Lib.getTimer();
 		timer     = (ltimer - _startTime) / 1000.0;
 

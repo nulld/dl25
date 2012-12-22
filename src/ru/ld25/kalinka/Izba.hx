@@ -73,10 +73,19 @@ class Izba extends Sprite
 	public function LeftPunch():Void
 	{
 		
+		locked = true;
 		anim.playAnimation( "leftPunch"
 							 , function():Void 
 							 { 
-								anim.playAnimation("idle");  
+								 var v:Int = Main.instance.keys.get(Main.LEFT_KEY);
+								 if (v > 0)
+								 {
+									 Main.instance.keys.set(Main.LEFT_KEY, v - 10000);
+								 }
+								 locked = false;
+								//Main.instance.leftKeyDown = false;
+								anim.playAnimation("idle"); 
+								
 							 });
 	
 		
@@ -92,13 +101,23 @@ class Izba extends Sprite
 		//Actuate.tween(legLeft, 0.5, { "currentFrame" : 10 } );
 	}
 	
+
+	
 	
 	public function RightPunch():Void
 	{
+		locked = true;
 		anim.playAnimation("rightPunch" 
 							   , function():Void 
 							   { 
-								 anim.playAnimation("idle"); 
+								  //Main.instance.rightKeyDown = false;
+								 var v:Int = Main.instance.keys.get(Main.RIGHT_KEY);
+								 if (v > 0)
+								 {
+									 Main.instance.keys.set(Main.RIGHT_KEY, v - 10000);
+								 }
+								 locked = false;
+								 anim.playAnimation("idle");
 							   });
 							   
 		
@@ -106,9 +125,23 @@ class Izba extends Sprite
 	
 	public function BothPunch():Void
 	{
+		locked = true;
+		var v:Int = Main.instance.keys.get(Main.LEFT_KEY);
+		if (v > 0)
+		{
+			Main.instance.keys.set(Main.LEFT_KEY, v - 10000);
+		}
+		 
+		v  = Main.instance.keys.get(Main.RIGHT_KEY);
+		if (v > 0)
+		{
+			Main.instance.keys.set(Main.RIGHT_KEY, v - 10000);
+		}
+		
 		anim.playAnimation("bothPunch" 
 						   , function():Void 
 						   { 
+							     locked = false;
 								 anim.playAnimation("idle"); 
 						   });
 	}
